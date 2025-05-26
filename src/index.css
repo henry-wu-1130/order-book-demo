@@ -1,0 +1,163 @@
+:root {
+  --color-background: #131B29;
+  --color-text: #F0F4F8;
+  --color-quote-head: #8698AA;
+  --color-quote-hover: #1E3059;
+  --color-buy-price: #00B15D;
+  --color-sell-price: #FF5B5A;
+  --color-buy-total-bar: rgba(16, 186, 104, 0.12);
+  --color-sell-total-bar: rgba(255, 90, 90, 0.12);
+  --color-flash-buy: rgba(0, 177, 93, 0.5);
+  --color-flash-sell: rgba(255, 91, 90, 0.5);
+  --color-table-background: #131B29;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+}
+
+.order-book {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.order-book .header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-quote-hover);
+}
+
+.order-book .header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-quote-head);
+}
+
+.quote-table {
+  width: 100%;
+  background-color: var(--color-table-background);
+  border-collapse: collapse;
+}
+
+.quote-table th {
+  color: var(--color-quote-head);
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  text-align: right;
+  font-weight: normal;
+}
+
+.quote-table th:first-child {
+  text-align: left;
+}
+
+.quote-table td {
+  padding: 0.5rem 1rem;
+  text-align: right;
+  position: relative;
+}
+
+.quote-table td:first-child {
+  text-align: left;
+}
+
+.quote-table tr {
+  position: relative;
+}
+
+.quote-table tr:hover {
+  background-color: var(--color-quote-hover);
+}
+
+.quote-table td {
+  position: relative;
+  z-index: 10;
+}
+
+.quote-table td.price {
+  text-align: left;
+}
+
+.quote-table td.total {
+  text-align: right;
+  background-color: var(--color-quote-hover);
+}
+
+.buy-quote .price {
+  color: rgb(var(--color-buy-price));
+}
+
+.sell-quote .price {
+  color: rgb(var(--color-sell-price));
+}
+
+.buy-quote .total-bar {
+  background-color: rgb(var(--color-buy-total-bar) / 0.15);
+}
+
+.sell-quote .total-bar {
+  background-color: rgb(var(--color-sell-total-bar) / 0.15);
+}
+
+.spread {
+  text-align: center;
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-quote-hover);
+  border-bottom: 1px solid var(--color-quote-hover);
+  background-color: var(--color-table-background);
+}
+
+.spread span {
+  color: var(--color-quote-head);
+  font-size: 0.875rem;
+}
+
+.buy-price {
+  color: var(--color-buy-price);
+}
+
+.sell-price {
+  color: var(--color-sell-price);
+}
+
+.text-quote-head {
+  color: var(--color-quote-head);
+}
+
+.buy-total-bar {
+  background-color: var(--color-buy-total-bar);
+}
+
+.sell-total-bar {
+  background-color: var(--color-sell-total-bar);
+}
+
+@keyframes flash-buy {
+  0% {
+    background-color: rgba(var(--color-flash-buy));
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash-sell {
+  0% {
+    background-color: rgba(var(--color-flash-sell));
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.flash-buy {
+  animation: flash-buy 0.5s ease-out;
+}
+
+.flash-sell {
+  animation: flash-sell 0.5s ease-out;
+}
