@@ -1,28 +1,27 @@
 :root {
-  --color-background: #131B29;
-  --color-text: #F0F4F8;
-  --color-quote-head: #8698AA;
-  --color-quote-hover: #1E3059;
-  --color-buy-price: #00B15D;
-  --color-sell-price: #FF5B5A;
+  --color-background: #131b29;
+  --color-text: #f0f4f8;
+  --color-quote-head: #8698aa;
+  --color-quote-hover: #1e3059;
+  --color-buy-price: #00b15d;
+  --color-sell-price: #ff5b5a;
   --color-buy-total-bar: rgba(16, 186, 104, 0.12);
   --color-sell-total-bar: rgba(255, 90, 90, 0.12);
   --color-flash-buy: rgba(0, 177, 93, 0.5);
   --color-flash-sell: rgba(255, 91, 90, 0.5);
-  --color-table-background: #131B29;
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text);
   margin: 0;
   padding: 0;
 }
 
 .order-book {
   width: 100%;
-  max-width: 500px;
+  max-width: 300px;
   margin: 0 auto;
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
 .order-book .header {
@@ -39,7 +38,6 @@ body {
 
 .quote-table {
   width: 100%;
-  background-color: var(--color-table-background);
   border-collapse: collapse;
 }
 
@@ -76,6 +74,7 @@ body {
 .quote-table td {
   position: relative;
   z-index: 10;
+  width: 33.33%;
 }
 
 .quote-table td.price {
@@ -160,4 +159,49 @@ body {
 
 .flash-sell {
   animation: flash-sell 0.5s ease-out;
+}
+
+@keyframes flashRowBuy {
+  0% {
+    background-color: rgba(16, 186, 104, 0.25);
+  }
+  100% {
+    background-color: inherit;
+  }
+}
+@keyframes flashRowSell {
+  0% {
+    background-color: rgba(255, 90, 90, 0.25);
+  }
+  100% {
+    background-color: inherit;
+  }
+}
+@keyframes flashSizeUp {
+  0% {
+    background-color: rgba(16, 186, 104, 0.25);
+  }
+  100% {
+    background-color: inherit;
+  }
+}
+@keyframes flashSizeDown {
+  0% {
+    background-color: rgba(255, 90, 90, 0.25);
+  }
+  100% {
+    background-color: inherit;
+  }
+}
+.flash-row-buy {
+  animation: flashRowBuy 0.7s;
+}
+.flash-row-sell {
+  animation: flashRowSell 0.7s;
+}
+.flash-size-up {
+  animation: flashSizeUp 0.7s;
+}
+.flash-size-down {
+  animation: flashSizeDown 0.7s;
 }

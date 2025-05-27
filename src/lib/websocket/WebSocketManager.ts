@@ -1,15 +1,14 @@
 export interface WebSocketMessage {
   topic?: string;
   channel?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface WebSocketConfig {
   url: string;
-  onMessage?: (data: WebSocketMessage) => void;
-  onError?: (error: Event) => void;
-  onClose?: (event: CloseEvent) => void;
   onOpen?: () => void;
+  onError?: (error: Event) => void;
+  onClose?: () => void;
 }
 
 export class WebSocketManager {
@@ -43,24 +42,24 @@ export class WebSocketManager {
       this.ws = new WebSocket(this.config.url);
 
       // 等待連接建立
-      await new Promise<void>((resolve, reject) => {
-        if (!this.ws) return reject(new Error('WebSocket is null'));
+      // await new Promise<void>((resolve, reject) => {
+      //   if (!this.ws) return reject(new Error('WebSocket is null'));
 
-        const onOpen = () => {
-          this.ws?.removeEventListener('open', onOpen);
-          this.ws?.removeEventListener('error', onError);
-          resolve();
-        };
+      //   const onOpen = () => {
+      //     this.ws?.removeEventListener('open', onOpen);
+      //     this.ws?.removeEventListener('error', onError);
+      //     resolve();
+      //   };
 
-        const onError = (error: Event) => {
-          this.ws?.removeEventListener('open', onOpen);
-          this.ws?.removeEventListener('error', onError);
-          reject(error);
-        };
+      //   const onError = (error: Event) => {
+      //     this.ws?.removeEventListener('open', onOpen);
+      //     this.ws?.removeEventListener('error', onError);
+      //     reject(error);
+      //   };
 
-        this.ws.addEventListener('open', onOpen);
-        this.ws.addEventListener('error', onError);
-      });
+      //   this.ws.addEventListener('open', onOpen);
+      //   this.ws.addEventListener('error', onError);
+      // });
 
       this.setupEventListeners();
     } catch (error) {
@@ -99,8 +98,6 @@ export class WebSocketManager {
           // 而收到的消息主題是 'tradeHistoryApi'，我們也認為是匹配的
           const messageTopic = data.topic || data.channel;
           if (messageTopic && registeredTopic.startsWith(messageTopic)) {
-            console.log('Received message for topic:', registeredTopic);
-
             handlers.forEach((handler) => {
               if (typeof handler === 'function') {
                 handler(data);
@@ -115,13 +112,11 @@ export class WebSocketManager {
       }
     };
 
-    this.ws.onerror = (error) => {
-      this.config.onError?.(error);
+    this.ws.onerror = () => {
       this.handleReconnect();
     };
 
-    this.ws.onclose = (event) => {
-      this.config.onClose?.(event);
+    this.ws.onclose = () => {
       this.handleReconnect();
     };
   }

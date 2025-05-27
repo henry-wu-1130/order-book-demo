@@ -5,7 +5,12 @@ import {
 
 export interface TradeMessage extends WebSocketMessage {
   topic: string;
-  data: [string, string, number, 'buy' | 'sell', string?][];
+  data: {
+    price: string;
+    size: string;
+    timestamp: number;
+    side: 'buy' | 'sell';
+  }[];
 }
 
 export interface Trade {
@@ -48,7 +53,7 @@ export class TradeService {
       return;
     }
 
-    const [price, size, timestamp, side] = tradeMsg.data[0];
+    const { price, size, timestamp, side } = tradeMsg.data[0];
 
     const trade: Trade = {
       price: parseFloat(price),
@@ -62,10 +67,7 @@ export class TradeService {
 
   private async subscribe() {
     try {
-      await this.wsManager.subscribe(
-        this.TOPIC,
-        this.handleMessage.bind(this)
-      );
+      await this.wsManager.subscribe(this.TOPIC, this.handleMessage);
       this.resubscribeAttempts = 0;
     } catch (error) {
       console.error('Subscribe error:', error);
@@ -91,7 +93,7 @@ export class TradeService {
   }
 
   private async resubscribe() {
-    this.wsManager.unsubscribe(this.TOPIC, this.handleMessage.bind(this));
+    this.wsManager.unsubscribe(this.TOPIC, this.handleMessage);
     await this.subscribe();
   }
 
@@ -104,7 +106,7 @@ export class TradeService {
   }
 
   public close() {
-    this.wsManager.unsubscribe(this.TOPIC, this.handleMessage.bind(this));
+    this.wsManager.unsubscribe(this.TOPIC, this.handleMessage);
     this.wsManager.close();
   }
 }

@@ -63,10 +63,10 @@ export class OrderBookService {
     });
   }
 
-  private handleMessage(message: WebSocketMessage) {
+  private handleMessage = (message: WebSocketMessage) => {
     const update = message as OrderBookUpdate;
 
-    if (update.data.type === 'snapshot') {
+    if (update.data?.type === 'snapshot') {
       // 處理快照數據
       this.lastSeqNum = update.data.seqNum;
       this.orderBookCache.seqNum = update.data.seqNum;
@@ -90,7 +90,7 @@ export class OrderBookService {
 
       // 重置重訂閱計數
       this.resubscribeAttempts = 0;
-    } else if (update.data.type === 'delta') {
+    } else if (update.data?.type === 'delta') {
       // 檢查序列號
       if (
         this.lastSeqNum !== null &&
@@ -135,7 +135,7 @@ export class OrderBookService {
 
     // 將緩存轉換為排序後的訂單簿數據
     this.notifyUpdate();
-  }
+  };
 
   private notifyUpdate() {
     // 從緩存創建排序後的訂單簿數據
@@ -157,7 +157,7 @@ export class OrderBookService {
 
     // 轉換 asks
     const sortedAsks = Array.from(this.orderBookCache.asks.entries())
-      .sort(([priceA], [priceB]) => Number(priceA) - Number(priceB))
+      .sort(([priceA], [priceB]) => Number(priceB) - Number(priceA))
       .slice(0, this.MAX_ORDERS)
       .map(([price, size]) => ({
         price: Number(price),
@@ -168,14 +168,14 @@ export class OrderBookService {
     // 計算累計數量
     let bidTotal = 0;
     sortedBids.forEach((bid) => {
-      bidTotal = Number(bidTotal) + Number(bid.size);
-      bid.total = Number(bidTotal);
+      bidTotal = bidTotal + bid.size;
+      bid.total = bidTotal;
     });
 
     let askTotal = 0;
     sortedAsks.forEach((ask) => {
-      askTotal = Number(askTotal) + Number(ask.size);
-      ask.total = Number(askTotal);
+      askTotal = askTotal + ask.size;
+      ask.total = askTotal;
     });
 
     orderBook.bids = sortedBids;
@@ -185,11 +185,11 @@ export class OrderBookService {
   }
 
   private subscribe() {
-    this.ws.subscribe('update:BTCPFC_0', this.handleMessage.bind(this));
+    this.ws.subscribe('update:BTCPFC_0', this.handleMessage);
   }
 
   private resubscribe() {
-    this.ws.unsubscribe('update:BTCPFC_0', this.handleMessage.bind(this));
+    this.ws.unsubscribe('update:BTCPFC_0', this.handleMessage);
     this.subscribe();
   }
 
@@ -199,5 +199,6 @@ export class OrderBookService {
 
   public close() {
     this.ws.unsubscribe('update:BTCPFC_0', this.handleMessage.bind(this));
+    this.ws.close();
   }
 }

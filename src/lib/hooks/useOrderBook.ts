@@ -5,6 +5,10 @@ import {
 } from '../services/OrderBookService';
 import { TradeService, type Trade } from '../services/TradeService';
 
+// Singleton instances to ensure only one connection per service
+const orderBookService = new OrderBookService();
+const tradeService = new TradeService();
+
 export const useOrderBook = () => {
   const [orderBook, setOrderBook] = useState<OrderBookData>({
     bids: [],
@@ -13,33 +17,11 @@ export const useOrderBook = () => {
   const [lastTrade, setLastTrade] = useState<Trade | null>(null);
 
   useEffect(() => {
-    const orderBookService = new OrderBookService();
-    const tradeService = new TradeService();
+    orderBookService.onUpdate(setOrderBook);
+    tradeService.onTrade(setLastTrade);
+    console.log(orderBook.asks);
 
-    const setup = async () => {
-      try {
-        orderBookService.onUpdate((data) => {
-          console.log(data);
-
-          setOrderBook(data);
-        });
-
-        const tradeCallback = (trade: Trade) => {
-          setLastTrade(trade);
-        };
-
-        await tradeService.onTrade(tradeCallback);
-      } catch (error) {
-        console.error('Error setting up services:', error);
-      }
-    };
-
-    setup();
-
-    return () => {
-      orderBookService.close();
-      //tradeService.close();
-    };
+    // Do not close here; let the app manage lifecycle if needed
   }, []);
 
   return {
