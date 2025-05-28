@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import OrderBook, { type OrderBookData, type Trade } from '../OrderBook';
 
 describe('OrderBook', () => {
-  const emptyOrderBook: OrderBookData = { asks: [], bids: [] };
+  const emptyOrderBook: OrderBookData = { asks: [], bids: [] }; // OK, as empty arrays are fine
   const mockOrderBook: OrderBookData = {
     asks: [
       { price: 21699.0, size: 100, total: 100 },
@@ -14,6 +14,8 @@ describe('OrderBook', () => {
       { price: 21616.0, size: 400, total: 700 },
     ],
   };
+
+  // Add more test cases if you have other mock data, always include 'total' in each order object.
   const mockLastTrade: Trade = { price: 21700 };
 
   it('renders without crashing', () => {
@@ -23,7 +25,9 @@ describe('OrderBook', () => {
 
   it('displays the correct headers', () => {
     render(<OrderBook orderBook={emptyOrderBook} lastTrade={null} />);
-    const header = screen.getByText('Price (USD)').parentElement;
+    // There are two headers, check the first one (asks)
+    const headers = screen.getAllByText('Price (USD)');
+    const header = headers[0].parentElement;
     expect(header).toHaveClass('quote-header');
     expect(header).toHaveTextContent('Price (USD)');
     expect(header).toHaveTextContent('Size');

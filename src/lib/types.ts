@@ -21,3 +21,9 @@ export interface Trade {
 export interface TradeMessage extends WebSocketMessage {
   data: [string, string, number, 'buy' | 'sell', string?][];
 }
+
+export type Order = {
+  price: number;
+  size: number;
+  total: number;
+};

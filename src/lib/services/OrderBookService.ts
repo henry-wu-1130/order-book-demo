@@ -96,6 +96,8 @@ export class OrderBookService {
         this.lastSeqNum !== null &&
         update.data.seqNum !== this.lastSeqNum + 1
       ) {
+        console.log('Sequence number mismatch');
+
         const now = Date.now();
         if (now - this.lastResubscribeTime < this.MIN_RESUBSCRIBE_INTERVAL) {
           console.log('Skipping resubscribe due to rate limit');
@@ -117,7 +119,7 @@ export class OrderBookService {
 
       // 更新緩存
       update.data.bids.forEach(([price, size]) => {
-        if (size === 0) {
+        if (Number(size) === 0) {
           this.orderBookCache.bids.delete(price);
         } else {
           this.orderBookCache.bids.set(price, size);
@@ -125,7 +127,7 @@ export class OrderBookService {
       });
 
       update.data.asks.forEach(([price, size]) => {
-        if (size === 0) {
+        if (Number(size) === 0) {
           this.orderBookCache.asks.delete(price);
         } else {
           this.orderBookCache.asks.set(price, size);
