@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import {
   OrderBookService,
   type OrderBookData,
-} from '../services/OrderBookService';
-import { TradeService, type Trade } from '../services/TradeService';
+} from '../services/orderBookService';
+import { TradeService, type Trade } from '../services/tradeService';
 
 // Singleton instances to ensure only one connection per service
 const orderBookService = new OrderBookService();

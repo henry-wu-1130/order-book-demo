@@ -1,16 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { useOrderBook } from './hooks/useOrderBook';
 import cx from 'classnames';
 
-interface OrderBookProps {
-  initialData?: {
-    bids: { price: number; size: number; total: number }[];
-    asks: { price: number; size: number; total: number }[];
-  };
+export interface OrderBookData {
+  bids: { price: number; size: number; total: number }[];
+  asks: { price: number; size: number; total: number }[];
 }
 
-interface Trade {
+export interface Trade {
   price: number;
+}
+
+interface OrderBookProps {
+  orderBook: OrderBookData;
+  lastTrade: Trade | null;
 }
 
 const formatNumber = (num: number): string => {
@@ -78,10 +80,9 @@ const getArrowStyle = (lastTrade: Trade | null, prevPrice: number | null) => {
   };
 };
 
-const OrderBook = ({ initialData }: OrderBookProps = {}) => {
-  const { orderBook: liveOrderBook, lastTrade } = useOrderBook();
-  const orderBook = initialData || liveOrderBook;
+const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
   const prevPrice = useRef<number | null>(null);
+
   // --- highlight animation state ---
   const prevAsksRef = useRef<{ price: number; size: number }[]>([]);
   const prevBidsRef = useRef<{ price: number; size: number }[]>([]);
@@ -133,10 +134,11 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                   prevPrice.current
                 );
 
-                const maxTotal = Math.max(
-                  ...orderBook.asks.map((a) => a.total)
-                );
-                const barWidthPercent = (ask.total / maxTotal) * 100;
+                const maxTotal =
+                  orderBook.asks[orderBook.asks.length - 1].total;
+
+                const barWidthPercent =
+                  maxTotal > 0 ? (ask.total / maxTotal) * 100 : 0;
 
                 return (
                   <tr
@@ -146,6 +148,7 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                       'price-down': isPriceDown,
                       'flash-row-sell': !prevAsk,
                     })}
+                    style={{ position: 'relative' }}
                   >
                     <td
                       className={cx('sell-price', {
@@ -163,12 +166,11 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                     >
                       {formatNumber(ask.size)}
                     </td>
-                    <td style={{ position: 'relative' }}>
+                    <td>
                       <div
-                        className={cx(
-                          'total-bar absolute top-0 right-0 h-full z-0 bg-sell-total-bar'
-                        )}
+                        className="sell-total-bar"
                         style={{
+                          position: 'absolute',
                           width: `${barWidthPercent}%`,
                           height: '100%',
                           top: 0,
@@ -176,16 +178,7 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                           zIndex: 0,
                         }}
                       />
-                      <span
-                        className={cx({
-                          'total-up': isPriceUp,
-                          'total-down': isPriceDown,
-                          'flash-size-up': prevAsk && ask.size > prevAsk.size,
-                          'flash-size-down': prevAsk && ask.size < prevAsk.size,
-                        })}
-                      >
-                        {formatNumber(ask.total)}
-                      </span>
+                      {formatNumber(ask.total)}
                     </td>
                   </tr>
                 );
@@ -250,26 +243,24 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                   'flash-row-buy': !prevBid,
                 });
 
+                const maxTotal =
+                  orderBook.bids[orderBook.bids.length - 1].total;
                 const barWidthPercent =
-                  (bid.total /
-                    Math.max(...orderBook.bids.map((b) => b.total))) *
-                  100;
+                  maxTotal > 0 ? (bid.total / maxTotal) * 100 : 0;
 
                 return (
-                  <tr key={bid.price} className={rowClass}>
+                  <tr
+                    key={bid.price}
+                    className={rowClass}
+                    style={{ position: 'relative' }}
+                  >
                     <td className="buy-price">{formatNumber(bid.price)}</td>
                     <td>{formatNumber(bid.size)}</td>
-                    <td style={{ position: 'relative' }}>
+                    <td>
                       <div
-                        className={cx(
-                          'total-bar absolute top-0 right-0 h-full z-0 bg-buy-total-bar',
-                          {
-                            'flash-size-up': prevBid && bid.size > prevBid.size,
-                            'flash-size-down':
-                              prevBid && bid.size < prevBid.size,
-                          }
-                        )}
+                        className="buy-total-bar"
                         style={{
+                          position: 'absolute',
                           width: `${barWidthPercent}%`,
                           height: '100%',
                           top: 0,
@@ -277,9 +268,7 @@ const OrderBook = ({ initialData }: OrderBookProps = {}) => {
                           zIndex: 0,
                         }}
                       />
-                      <span style={{ position: 'relative', zIndex: 1 }}>
-                        {formatNumber(bid.total)}
-                      </span>
+                      {formatNumber(bid.total)}
                     </td>
                   </tr>
                 );

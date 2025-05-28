@@ -147,7 +147,7 @@ export class OrderBookService {
 
     // 轉換 bids
     const sortedBids = Array.from(this.orderBookCache.bids.entries())
-      .sort(([priceA], [priceB]) => Number(priceB) - Number(priceA))
+      .sort(([priceA], [priceB]) => Number(priceA) - Number(priceB))
       .slice(0, this.MAX_ORDERS)
       .map(([price, size]) => ({
         price: Number(price),

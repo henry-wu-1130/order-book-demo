@@ -1,12 +1,12 @@
-import { OrderBook } from '../lib'
+import OrderBookContainer from '../lib/OrderBookContainer';
 
 const Demo = () => {
   return (
     <div className="demo-page">
       <h1>Order Book Demo</h1>
-      <OrderBook />
+      <OrderBookContainer />
     </div>
-  )
-}
+  );
+};
 
-export default Demo
+export default Demo;

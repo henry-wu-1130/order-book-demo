@@ -205,3 +205,11 @@ body {
 .flash-size-down {
   animation: flashSizeDown 0.7s;
 }
+
+.relative {
+  position: relative;
+}
+
+.z-10 {
+  z-index: 10;
+}
