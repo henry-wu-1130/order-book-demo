@@ -3,7 +3,7 @@ import OrderBookContainer from '../lib/OrderBookContainer';
 const Demo = () => {
   return (
     <div className="demo-page">
-      <h1>Order Book Demo</h1>
+      <h1 className="text-2xl font-bold">Order Book Demo</h1>
       <OrderBookContainer />
     </div>
   );

@@ -1,11 +1,11 @@
 import React from 'react';
 import cx from 'classnames';
-import { formatNumber } from './helpers/utils';
+import { formatNumber, formatPrice } from './helpers/utils';
 import { type Order } from './types';
 
 interface OrderBookRowProps {
   order: Order;
-  prevOrder?: Order;
+  prevOrder?: Order | null;
   side: 'ask' | 'bid';
   maxTotal: number;
 }
@@ -23,13 +23,24 @@ const OrderBookRow: React.FC<OrderBookRowProps> = ({
   const rowFlashClass = isBuy ? 'flash-row-buy' : 'flash-row-sell';
 
   const rowClass = cx('relative flex w-full quote-row', {
-    [rowFlashClass]: !prevOrder,
+    //[rowFlashClass]: !prevOrder,
   });
   const barClass = cx({
     [totalBarClass]: true,
     [rowFlashClass]: !prevOrder,
   });
-  const cellClass = cx('w-33.33');
+
+  // Size 變化的動畫
+  let sizeFlashClass = '';
+  if (prevOrder) {
+    if (order.size > prevOrder.size) {
+      sizeFlashClass = 'flash-size-up';
+    } else if (order.size < prevOrder.size) {
+      sizeFlashClass = 'flash-size-down';
+    }
+  }
+
+  const cellClass = cx('flex justify-end w-33.33');
 
   const barWidthPercent = maxTotal > 0 ? (order.total / maxTotal) * 100 : 0;
 
@@ -46,11 +57,13 @@ const OrderBookRow: React.FC<OrderBookRowProps> = ({
           zIndex: 0,
         }}
       />
-      <div className={cx(priceClass, cellClass)}>
-        {formatNumber(order.price)}
+      <div className={cx('flex justify-start', cellClass, priceClass)}>
+        {formatPrice(order.price)}
       </div>
-      <div className={cx(cellClass)}>{formatNumber(order.size)}</div>
-      <div className={'w-33.34'}>{formatNumber(order.total)}</div>
+      <div className={cx('flex justify-end', cellClass, sizeFlashClass)}>
+        {formatNumber(order.size)}
+      </div>
+      <div className={cellClass}>{formatNumber(order.total)}</div>
     </div>
   );
 };

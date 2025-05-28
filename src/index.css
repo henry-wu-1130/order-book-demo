@@ -20,7 +20,7 @@ body {
 
 .order-book {
   width: 100%;
-  max-width: 300px;
+  max-width: 100%;
   margin: 0 auto;
   color: var(--color-text);
   background-color: var(--color-background);
@@ -47,7 +47,7 @@ body {
   font-weight: 600;
   color: var(--color-quote-head);
   font-size: 0.875rem;
-  padding: 0.5rem 0.5rem 0.5rem 0;
+  padding: 0.5rem 0 0.5rem 0;
 }
 
 .quote-header > div {
@@ -111,12 +111,22 @@ body {
   padding: 0.75rem;
   border-top: 1px solid var(--color-quote-hover);
   border-bottom: 1px solid var(--color-quote-hover);
-  background-color: var(--color-table-background);
+  transition: all 0.3s ease;
 }
 
-.last-price span {
-  color: var(--color-quote-head);
-  font-size: 0.875rem;
+.last-price-up {
+  color: var(--color-flash-buy);
+  background-color: var(--color-flash-buy);
+}
+
+.last-price-down {
+  color: var(--color-flash-sell);
+  background-color: var(--color-flash-sell);
+}
+
+.last-price-neutral {
+  color: var(--color-flash-buy);
+  background-color: var(--color-flash-buy);
 }
 
 .buy-price {

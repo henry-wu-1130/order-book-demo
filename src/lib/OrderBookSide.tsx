@@ -20,9 +20,9 @@ const OrderBookSide: React.FC<OrderBookSideProps> = ({
       className={`quote-table ${side === 'ask' ? 'sell-quote' : 'buy-quote'}`}
     >
       <div className="flex font-semibold quote-header">
-        <div className="w-33.33">Price (USD)</div>
-        <div className="w-33.33">Size</div>
-        <div className="w-33.34">Total</div>
+        <div className="w-33.33 flex justify-start">Price (USD)</div>
+        <div className="w-33.33 flex justify-end">Size</div>
+        <div className="w-33.34 flex justify-end">Total</div>
       </div>
       <div className="quote-body">
         {orders.map((order) => {

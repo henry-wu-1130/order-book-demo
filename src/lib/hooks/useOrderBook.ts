@@ -19,7 +19,6 @@ export const useOrderBook = () => {
   useEffect(() => {
     orderBookService.onUpdate(setOrderBook);
     tradeService.onTrade(setLastTrade);
-    console.log(orderBook.asks);
 
     // Do not close here; let the app manage lifecycle if needed
   }, []);
