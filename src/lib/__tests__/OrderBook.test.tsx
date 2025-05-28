@@ -21,32 +21,27 @@ describe('OrderBook', () => {
     expect(screen.getByText('Order Book')).toBeInTheDocument();
   });
 
-  it('displays the correct table headers', () => {
+  it('displays the correct headers', () => {
     render(<OrderBook orderBook={emptyOrderBook} lastTrade={null} />);
-    const headers = screen.getAllByRole('columnheader');
-    expect(headers).toHaveLength(3);
-    const expectedHeaders = ['Price (USD)', 'Size', 'Total'];
-    headers.forEach((header, index) => {
-      expect(header).toHaveTextContent(expectedHeaders[index]);
-    });
+    const header = screen.getByText('Price (USD)').parentElement;
+    expect(header).toHaveClass('quote-header');
+    expect(header).toHaveTextContent('Price (USD)');
+    expect(header).toHaveTextContent('Size');
+    expect(header).toHaveTextContent('Total');
   });
 
   it('shows empty state when no orders', () => {
     render(<OrderBook orderBook={emptyOrderBook} lastTrade={null} />);
-    const tables = screen.getAllByRole('table');
-    expect(tables.length).toBeGreaterThanOrEqual(1);
-    tables.forEach((table) => {
-      const rows = table.querySelectorAll('tbody tr');
-      expect(rows.length).toBe(0);
-    });
+    // No .quote-row should render
+    expect(document.querySelectorAll('.quote-row').length).toBe(0);
     expect(screen.getByText('-.--')).toBeInTheDocument();
   });
 
   it('formats numbers correctly', () => {
     render(<OrderBook orderBook={mockOrderBook} lastTrade={mockLastTrade} />);
     expect(screen.getAllByText('21,699')).toHaveLength(1);
-    expect(screen.getAllByText('100')).toHaveLength(2);
+    expect(screen.getAllByText('100')).toHaveLength(2); // price and total
     expect(screen.getAllByText('21,617')).toHaveLength(1);
-    expect(screen.getAllByText('300')).toHaveLength(3); // bid total, ask total
+    expect(screen.getAllByText('300')).toHaveLength(3);
   });
 });

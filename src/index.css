@@ -38,53 +38,56 @@ body {
 
 .quote-table {
   width: 100%;
-  border-collapse: collapse;
 }
 
-.quote-table th {
+.quote-header {
+  display: flex;
+  font-weight: 600;
   color: var(--color-quote-head);
   font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  text-align: right;
-  font-weight: normal;
+  padding: 0.5rem 0.5rem 0.5rem 0;
 }
 
-.quote-table th:first-child {
+.quote-header > div {
+  width: 33.33%;
+  text-align: right;
+  padding: 0 1rem;
+}
+
+.quote-header > div:first-child {
   text-align: left;
 }
 
-.quote-table td {
-  padding: 0.5rem 1rem;
-  text-align: right;
+.quote-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.quote-row {
+  display: flex;
+  align-items: center;
   position: relative;
+  min-height: 32px;
+  transition: background 0.2s;
 }
 
-.quote-table td:first-child {
-  text-align: left;
-}
-
-.quote-table tr {
-  position: relative;
-}
-
-.quote-table tr:hover {
+.quote-row:hover {
   background-color: var(--color-quote-hover);
 }
 
-.quote-table td {
+.quote-row > div {
+  width: 33.33%;
+  padding: 0.5rem 1rem;
+  text-align: right;
   position: relative;
   z-index: 10;
-  width: 33.33%;
+  font-size: 1rem;
 }
 
-.quote-table td.price {
+.quote-row > div:first-child {
   text-align: left;
 }
 
-.quote-table td.total {
-  text-align: right;
-  background-color: var(--color-quote-hover);
-}
 
 .buy-quote .price {
   color: rgb(var(--color-buy-price));
@@ -102,7 +105,7 @@ body {
   background-color: rgb(var(--color-sell-total-bar) / 0.15);
 }
 
-.spread {
+.last-price {
   text-align: center;
   padding: 0.75rem;
   border-top: 1px solid var(--color-quote-hover);
@@ -110,7 +113,7 @@ body {
   background-color: var(--color-table-background);
 }
 
-.spread span {
+.last-price span {
   color: var(--color-quote-head);
   font-size: 0.875rem;
 }
@@ -193,19 +196,24 @@ body {
     background-color: inherit;
   }
 }
+/* Animation utility classes */
 .flash-row-buy {
   animation: flashRowBuy 0.7s;
 }
+
 .flash-row-sell {
   animation: flashRowSell 0.7s;
 }
+
 .flash-size-up {
   animation: flashSizeUp 0.7s;
 }
+
 .flash-size-down {
   animation: flashSizeDown 0.7s;
 }
 
+/* Layout utility classes */
 .relative {
   position: relative;
 }
@@ -213,3 +221,4 @@ body {
 .z-10 {
   z-index: 10;
 }
+

@@ -116,15 +116,18 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
       </div>
       <div className="content">
         <div className="asks">
-          <table className="quote-table sell-quote">
-            <thead>
-              <tr>
-                <th style={{ width: '33.33%' }}>Price (USD)</th>
-                <th style={{ width: '33.33%' }}>Size</th>
-                <th style={{ width: '33.33%' }}>Total</th>
-              </tr>
-            </thead>
-            <tbody>
+          <div className="quote-table sell-quote">
+            {/* Header row */}
+            <div
+              className="quote-header"
+              style={{ display: 'flex', fontWeight: 600 }}
+            >
+              <div style={{ width: '33.33%' }}>Price (USD)</div>
+              <div style={{ width: '33.33%' }}>Size</div>
+              <div style={{ width: '33.33%' }}>Total</div>
+            </div>
+            {/* Data rows */}
+            <div className="quote-body">
               {orderBook.asks.map((ask) => {
                 const prevAsks = prevAsksRef.current || [];
                 const prevAsk = prevAsks.find((a) => a.price === ask.price);
@@ -136,37 +139,38 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
 
                 const maxTotal =
                   orderBook.asks[orderBook.asks.length - 1].total;
-
                 const barWidthPercent =
                   maxTotal > 0 ? (ask.total / maxTotal) * 100 : 0;
 
                 return (
-                  <tr
+                  <div
                     key={ask.price}
-                    className={cx({
+                    className={cx('quote-row', {
                       'price-up': isPriceUp,
                       'price-down': isPriceDown,
                       'flash-row-sell': !prevAsk,
                     })}
-                    style={{ position: 'relative' }}
+                    style={{ display: 'flex', position: 'relative' }}
                   >
-                    <td
+                    <div
                       className={cx('sell-price', {
                         'price-up': isPriceUp,
                         'price-down': isPriceDown,
                       })}
+                      style={{ width: '33.33%' }}
                     >
                       {formatNumber(ask.price)}
-                    </td>
-                    <td
+                    </div>
+                    <div
                       className={cx({
                         'size-up': isPriceUp,
                         'size-down': isPriceDown,
                       })}
+                      style={{ width: '33.33%' }}
                     >
                       {formatNumber(ask.size)}
-                    </td>
-                    <td>
+                    </div>
+                    <div style={{ width: '33.33%', position: 'relative' }}>
                       <div
                         className="sell-total-bar"
                         style={{
@@ -179,15 +183,15 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
                         }}
                       />
                       {formatNumber(ask.total)}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
         <div
-          className={cx('spread', {
+          className={cx('last-price', {
             'flash-size-up':
               prevPrice.current && lastTrade?.price > prevPrice.current,
             'flash-size-down':
@@ -233,13 +237,13 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
           </span>
         </div>
         <div className="bids">
-          <table className="quote-table buy-quote">
-            <tbody>
+          <div className="quote-table buy-quote">
+            <div className="quote-body">
               {orderBook.bids.map((bid) => {
                 const prevBids = prevBidsRef.current || [];
                 const prevBid = prevBids.find((b) => b.price === bid.price);
 
-                const rowClass = cx({
+                const rowClass = cx('quote-row', {
                   'flash-row-buy': !prevBid,
                 });
 
@@ -249,14 +253,18 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
                   maxTotal > 0 ? (bid.total / maxTotal) * 100 : 0;
 
                 return (
-                  <tr
+                  <div
                     key={bid.price}
                     className={rowClass}
-                    style={{ position: 'relative' }}
+                    style={{ display: 'flex', position: 'relative' }}
                   >
-                    <td className="buy-price">{formatNumber(bid.price)}</td>
-                    <td>{formatNumber(bid.size)}</td>
-                    <td>
+                    <div className="buy-price" style={{ width: '33.33%' }}>
+                      {formatNumber(bid.price)}
+                    </div>
+                    <div style={{ width: '33.33%' }}>
+                      {formatNumber(bid.size)}
+                    </div>
+                    <div style={{ width: '33.33%', position: 'relative' }}>
                       <div
                         className="buy-total-bar"
                         style={{
@@ -269,12 +277,12 @@ const OrderBook = ({ orderBook, lastTrade }: OrderBookProps) => {
                         }}
                       />
                       {formatNumber(bid.total)}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
