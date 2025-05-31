@@ -2,6 +2,7 @@ import {
   WebSocketManager,
   type WebSocketMessage,
 } from '../websocket/WebSocketManager';
+import { getWsEndpoint } from '../../config';
 
 export type OrderBookEntry = {
   price: number;
@@ -50,7 +51,7 @@ export class OrderBookService {
 
   constructor() {
     this.ws = WebSocketManager.getInstance({
-      url: 'wss://ws.btse.com/ws/oss/futures',
+      url: getWsEndpoint('ossFutures'),
       onOpen: () => {
         this.subscribe();
       },
@@ -96,11 +97,9 @@ export class OrderBookService {
         this.lastSeqNum !== null &&
         update.data.seqNum !== this.lastSeqNum + 1
       ) {
-        console.log('Sequence number mismatch');
-
         const now = Date.now();
         if (now - this.lastResubscribeTime < this.MIN_RESUBSCRIBE_INTERVAL) {
-          console.log('Skipping resubscribe due to rate limit');
+          console.warn('Skipping resubscribe due to rate limit');
           return;
         }
 
@@ -148,9 +147,12 @@ export class OrderBookService {
     };
 
     // 轉換 bids
+    // 1. 先用升序排序取得最高價的 N 筆訂單
+    // 2. 再反轉成降序顯示（從高到低）
     const sortedBids = Array.from(this.orderBookCache.bids.entries())
       .sort(([priceA], [priceB]) => Number(priceA) - Number(priceB))
-      .slice(0, this.MAX_ORDERS)
+      .slice(-this.MAX_ORDERS)
+      .reverse()
       .map(([price, size]) => ({
         price: Number(price),
         size: Number(size),
@@ -168,17 +170,23 @@ export class OrderBookService {
       }));
 
     // 計算累計數量
+    // Bids: 從最高價開始累計（價格由高到低排序）
     let bidTotal = 0;
     sortedBids.forEach((bid) => {
       bidTotal = bidTotal + bid.size;
       bid.total = bidTotal;
     });
 
-    let askTotal = 0;
-    sortedAsks.forEach((ask) => {
-      askTotal = askTotal + ask.size;
-      ask.total = askTotal;
-    });
+    // Asks: 從當前價格開始往下累加（價格由高到低排序）
+    for (let i = 0; i < sortedAsks.length; i++) {
+      // 當前價格的 total 從自己的 size 開始累加
+      let total = sortedAsks[i].size;
+      // 加上所有更優價格的 size
+      for (let j = i + 1; j < sortedAsks.length; j++) {
+        total += sortedAsks[j].size;
+      }
+      sortedAsks[i].total = total;
+    }
 
     orderBook.bids = sortedBids;
     orderBook.asks = sortedAsks;

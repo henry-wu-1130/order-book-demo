@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import OrderBook, { type OrderBookData, type Trade } from '../OrderBook';
+import OrderBook, { type OrderBookData } from '../components/OrderBook';
+import { type Trade } from '../types';
 
 describe('OrderBook', () => {
   const emptyOrderBook: OrderBookData = { asks: [], bids: [] }; // OK, as empty arrays are fine
@@ -16,7 +17,12 @@ describe('OrderBook', () => {
   };
 
   // Add more test cases if you have other mock data, always include 'total' in each order object.
-  const mockLastTrade: Trade = { price: 21700 };
+  const mockLastTrade: Trade = {
+    price: 21700,
+    size: 100,
+    side: 'bid',
+    timestamp: Date.now(),
+  };
 
   it('renders without crashing', () => {
     render(<OrderBook orderBook={emptyOrderBook} lastTrade={null} />);
@@ -43,9 +49,9 @@ describe('OrderBook', () => {
 
   it('formats numbers correctly', () => {
     render(<OrderBook orderBook={mockOrderBook} lastTrade={mockLastTrade} />);
-    expect(screen.getAllByText('21,699')).toHaveLength(1);
+    expect(screen.getAllByText('21,699.0')).toHaveLength(1);
     expect(screen.getAllByText('100')).toHaveLength(2); // price and total
-    expect(screen.getAllByText('21,617')).toHaveLength(1);
+    expect(screen.getAllByText('21,617.0')).toHaveLength(1);
     expect(screen.getAllByText('300')).toHaveLength(3);
   });
 });

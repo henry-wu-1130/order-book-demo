@@ -2,23 +2,16 @@ import {
   WebSocketManager,
   type WebSocketMessage,
 } from '../websocket/WebSocketManager';
-
+import { type Trade } from '../types';
+import { getWsEndpoint } from '../../config';
 export interface TradeMessage extends WebSocketMessage {
   topic: string;
   data: {
     price: string;
     size: string;
     timestamp: number;
-    side: 'buy' | 'sell';
+    side: 'bid' | 'ask';
   }[];
-}
-
-export interface Trade {
-  price: number;
-  size: number;
-  timestamp: number;
-  side: 'buy' | 'sell';
-  spread?: number;
 }
 
 export class TradeService {
@@ -32,7 +25,7 @@ export class TradeService {
 
   constructor() {
     this.wsManager = WebSocketManager.getInstance({
-      url: 'wss://ws.btse.com/ws/futures',
+      url: getWsEndpoint('futures'),
       onOpen: () => {
         this.subscribe();
       },

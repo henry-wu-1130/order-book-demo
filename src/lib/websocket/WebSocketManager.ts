@@ -40,27 +40,6 @@ export class WebSocketManager {
   private async connect() {
     try {
       this.ws = new WebSocket(this.config.url);
-
-      // 等待連接建立
-      // await new Promise<void>((resolve, reject) => {
-      //   if (!this.ws) return reject(new Error('WebSocket is null'));
-
-      //   const onOpen = () => {
-      //     this.ws?.removeEventListener('open', onOpen);
-      //     this.ws?.removeEventListener('error', onError);
-      //     resolve();
-      //   };
-
-      //   const onError = (error: Event) => {
-      //     this.ws?.removeEventListener('open', onOpen);
-      //     this.ws?.removeEventListener('error', onError);
-      //     reject(error);
-      //   };
-
-      //   this.ws.addEventListener('open', onOpen);
-      //   this.ws.addEventListener('error', onError);
-      // });
-
       this.setupEventListeners();
     } catch (error) {
       this.handleReconnect();

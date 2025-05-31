@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import tailwind from '@tailwindcss/vite';
+import svgr from 'vite-plugin-svgr';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -9,14 +10,11 @@ const __dirname = dirname(__filename);
 
 // https://vite.dev/config/
 export default defineConfig({
-  optimizeDeps: {
-    include: ['tailwindcss', 'autoprefixer'],
-  },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwind(), svgr()],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/lib/index.ts'),
-      name: 'OrderBook',
+      name: 'order-book',
       fileName: 'index',
       formats: ['es'],
     },

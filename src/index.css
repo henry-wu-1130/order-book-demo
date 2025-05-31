@@ -1,21 +1,48 @@
 @import 'tailwindcss';
 
-@theme {
+:root {
   --color-background: #131b29;
   --color-text: #f0f4f8;
   --color-quote-head: #8698aa;
   --color-quote-hover: #1e3059;
-  --color-buy-price: #00b15d;
-  --color-sell-price: #ff5b5a;
-  --color-buy-total-bar: rgba(16, 186, 104, 0.12);
-  --color-sell-total-bar: rgba(255, 90, 90, 0.12);
-  --color-flash-buy: rgba(0, 177, 93, 0.5);
-  --color-flash-sell: rgba(255, 91, 90, 0.5);
+  --color-bid-price: #00b15d;
+  --color-ask-price: #ff5b5a;
+  --color-bid-total-bar: rgba(16, 186, 104, 0.12);
+  --color-ask-total-bar: rgba(255, 90, 90, 0.12);
+  --color-flash-bid: rgba(0, 177, 93, 0.5);
+  --color-flash-ask: rgba(255, 91, 90, 0.5);
+  --color-stable-bg: rgba(134, 152, 170, 0.12);
 }
 
 body {
   margin: 0;
   padding: 0;
+}
+
+/* Price text colors */
+.text-neutral {
+  color: var(--color-text);
+}
+
+.text-bid {
+  color: var(--color-bid-price);
+}
+
+.text-ask {
+  color: var(--color-ask-price);
+}
+
+/* Price backgrounds */
+.bg-stable {
+  background-color: var(--color-stable-bg);
+}
+
+.bg-flash-bid {
+  background-color: var(--color-flash-bid);
+}
+
+.bg-flash-ask {
+  background-color: var(--color-flash-ask);
 }
 
 .order-book {
@@ -35,7 +62,7 @@ body {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 500;
-  color: var(--color-quote-head);
+  color: var(--color-text);
 }
 
 .quote-table {
@@ -90,115 +117,102 @@ body {
   text-align: left;
 }
 
-.buy-quote .price {
-  color: rgb(var(--color-buy-price));
+.bid-total-bar {
+  background-color: var(--color-bid-total-bar);
 }
 
-.sell-quote .price {
-  color: rgb(var(--color-sell-price));
-}
-
-.buy-quote .total-bar {
-  background-color: rgb(var(--color-buy-total-bar) / 0.15);
-}
-
-.sell-quote .total-bar {
-  background-color: rgb(var(--color-sell-total-bar) / 0.15);
+.ask-total-bar {
+  background-color: var(--color-ask-total-bar);
 }
 
 .last-price {
   text-align: center;
   padding: 0.75rem;
-  border-top: 1px solid var(--color-quote-hover);
-  border-bottom: 1px solid var(--color-quote-hover);
+  margin: 0.2rem 0;
   transition: all 0.3s ease;
 }
 
-.last-price-up {
-  color: var(--color-flash-buy);
-  background-color: var(--color-flash-buy);
+@keyframes flash-size-up {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: var(--color-up-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
-.last-price-down {
-  color: var(--color-flash-sell);
-  background-color: var(--color-flash-sell);
-}
-
-.last-price-neutral {
-  color: var(--color-flash-buy);
-  background-color: var(--color-flash-buy);
-}
-
-.buy-price {
-  color: var(--color-buy-price);
-}
-
-.sell-price {
-  color: var(--color-sell-price);
+@keyframes flash-size-down {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: var(--color-down-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 .text-quote-head {
   color: var(--color-quote-head);
 }
 
-.buy-total-bar {
-  background-color: var(--color-buy-total-bar);
-}
-
-.sell-total-bar {
-  background-color: var(--color-sell-total-bar);
-}
-
-@keyframes flash-buy {
+@keyframes flash-bid {
   0% {
-    background-color: rgba(var(--color-flash-buy));
+    background-color: rgba(var(--color-flash-bid));
   }
   100% {
     background-color: transparent;
   }
 }
 
-@keyframes flash-sell {
+@keyframes flash-ask {
   0% {
-    background-color: rgba(var(--color-flash-sell));
+    background-color: rgba(var(--color-flash-ask));
   }
   100% {
     background-color: transparent;
   }
 }
 
-.flash-buy {
-  animation: flash-buy 0.5s ease-out;
+.flash-bid {
+  animation: flash-bid 0.5s ease-out;
 }
 
-.flash-sell {
-  animation: flash-sell 0.5s ease-out;
+.flash-ask {
+  animation: flash-ask 0.5s ease-out;
 }
 
-@keyframes flashRowBuy {
+@keyframes flashRowBid {
   0% {
-    background-color: var(--color-flash-buy);
+    background-color: var(--color-flash-bid);
   }
   100% {
     background-color: inherit;
   }
 }
-@keyframes flashRowSell {
+
+@keyframes flashRowAsk {
   0% {
-    background-color: var(--color-flash-sell);
+    background-color: var(--color-flash-ask);
   }
   100% {
     background-color: inherit;
   }
 }
+
 @keyframes flashSizeUp {
   0% {
-    background-color: var(--color-flash-buy);
+    background-color: var(--color-flash-bid);
   }
   100% {
     background-color: inherit;
   }
 }
+
 @keyframes flashSizeDown {
   0% {
     background-color: var(--color-flash-sell);
@@ -207,13 +221,14 @@ body {
     background-color: inherit;
   }
 }
+
 /* Animation utility classes */
-.flash-row-buy {
-  animation: flashRowBuy 0.7s;
+.flash-row-bid {
+  animation: flashRowBid 0.7s;
 }
 
-.flash-row-sell {
-  animation: flashRowSell 0.7s;
+.flash-row-ask {
+  animation: flashRowAsk 0.7s;
 }
 
 .flash-size-up {
@@ -222,13 +237,4 @@ body {
 
 .flash-size-down {
   animation: flashSizeDown 0.7s;
-}
-
-/* Layout utility classes */
-.relative {
-  position: relative;
-}
-
-.z-10 {
-  z-index: 10;
 }

@@ -1,10 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  OrderBookService,
-  type OrderBookUpdate,
-} from '../services/orderBookService';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { OrderBookService } from '../services/OrderBookService';
 
-function createSnapshotMessage({ bids, asks, seqNum }) {
+import type { OrderBookData, OrderBookUpdate } from '../services/OrderBookService';
+
+interface OrderMessage extends OrderBookUpdate {
+  data: {
+    type: 'snapshot' | 'delta';
+    seqNum: number;
+    bids: [number, number][];
+    asks: [number, number][];
+  };
+}
+
+function createSnapshotMessage({ bids, asks, seqNum }: {
+  bids: [number, number][];
+  asks: [number, number][];
+  seqNum: number;
+}): OrderMessage {
   return {
     data: {
       type: 'snapshot',
@@ -12,10 +24,16 @@ function createSnapshotMessage({ bids, asks, seqNum }) {
       bids,
       asks,
     },
+    seqNum,
+    timestamp: Date.now(),
   };
 }
 
-function createDeltaMessage({ bids, asks, seqNum }) {
+function createDeltaMessage({ bids, asks, seqNum }: {
+  bids: [number, number][];
+  asks: [number, number][];
+  seqNum: number;
+}): OrderMessage {
   return {
     data: {
       type: 'delta',
@@ -23,12 +41,15 @@ function createDeltaMessage({ bids, asks, seqNum }) {
       bids,
       asks,
     },
+    seqNum,
+    timestamp: Date.now(),
   };
 }
 
 describe('OrderBookService', () => {
   let service: OrderBookService;
-  let updates: any[];
+  let updates: Array<OrderBookData>;
+
 
   beforeEach(() => {
     service = new OrderBookService();
@@ -51,9 +72,9 @@ describe('OrderBookService', () => {
       ],
     });
 
-    service['handleMessage'](msg as any);
+    service['handleMessage'](msg);
     expect(updates.length).toBe(1);
-    expect(updates[0].bids[0]).toMatchObject({ price: 99, size: 1 });
+    expect(updates[0].bids[0]).toMatchObject({ price: 100, size: 2 });
     expect(updates[0].asks[0]).toMatchObject({ price: 102, size: 4 });
   });
 
@@ -70,7 +91,7 @@ describe('OrderBookService', () => {
           [101, 3],
           [102, 4],
         ],
-      }) as any
+      })
     );
     updates.length = 0;
     // Delta update: update size, add new, remove
@@ -87,16 +108,16 @@ describe('OrderBookService', () => {
           [103, 2],
           [102, 0],
         ], // update 101, add 103, remove 102
-      }) as any
+      })
     );
     expect(updates.length).toBe(1);
     const orderBook = updates[0];
-    expect(orderBook.bids.some((b) => b.price === 99)).toBe(false);
-    expect(orderBook.bids.find((b) => b.price === 100)?.size).toBe(3);
-    expect(orderBook.bids.find((b) => b.price === 98)?.size).toBe(2);
-    expect(orderBook.asks.some((a) => a.price === 102)).toBe(false);
-    expect(orderBook.asks.find((a) => a.price === 101)?.size).toBe(1);
-    expect(orderBook.asks.find((a) => a.price === 103)?.size).toBe(2);
+    expect(orderBook.bids.some((b: { price: number }) => b.price === 99)).toBe(false);
+    expect(orderBook.bids.find((b: { price: number; size: number }) => b.price === 100)?.size).toBe(3);
+    expect(orderBook.bids.find((b: { price: number; size: number }) => b.price === 98)?.size).toBe(2);
+    expect(orderBook.asks.some((a: { price: number }) => a.price === 102)).toBe(false);
+    expect(orderBook.asks.find((a: { price: number; size: number }) => a.price === 101)?.size).toBe(1);
+    expect(orderBook.asks.find((a: { price: number; size: number }) => a.price === 103)?.size).toBe(2);
   });
 
   it('should ignore delta with wrong seqNum', () => {
@@ -105,7 +126,7 @@ describe('OrderBookService', () => {
         seqNum: 1,
         bids: [[100, 2]],
         asks: [[101, 3]],
-      }) as any
+      })
     );
     updates.length = 0;
     // This delta has seqNum 3 but lastSeqNum is 1, should trigger resubscribe logic (but we skip it in test)
@@ -114,7 +135,7 @@ describe('OrderBookService', () => {
         seqNum: 3,
         bids: [[100, 3]],
         asks: [[101, 1]],
-      }) as any
+      })
     );
     expect(updates.length).toBe(0);
   });
