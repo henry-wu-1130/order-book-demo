@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import cx from 'classnames';
 import type { Trade } from '../types';
 import { formatPrice } from '../helpers/utils';
@@ -41,7 +41,7 @@ const OrderBookLastPrice: FC<OrderBookLastPriceProps> = ({
     sameDirectionCount >= STABLE_COUNT ||
     lastDirection === null;
 
-  const priceClass = cx(
+  const priceClass = useMemo(() => cx(
     'flex items-center justify-center last-price transition-colors text-2xl',
     {
       'text-neutral bg-stable': isStable,
@@ -50,7 +50,7 @@ const OrderBookLastPrice: FC<OrderBookLastPriceProps> = ({
       'text-ask bg-flash-ask':
         lastDirection === 'down' && sameDirectionCount < STABLE_COUNT,
     }
-  );
+  ), [isStable, lastDirection, sameDirectionCount]);
 
   const arrowClass = cx('w-5 h-5 transition-transform', {
     'text-neutral':
